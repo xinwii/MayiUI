@@ -2,12 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-<ImageView
-    android:id="@+id/img"
-    android:layout_width="match_parent"
-    android:layout_height="400dp"
-    android:src="@mipmap/pic"
-    android:layout_marginTop="-80dp"
-    android:scaleType="fitXY"/>
 
+    <ImageView
+        android:id="@+id/img"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scaleType="fitCenter"
+        android:layout_marginTop="-60dp"
+        android:src="@mipmap/pic" />
 </LinearLayout>

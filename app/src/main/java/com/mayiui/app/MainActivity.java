@@ -11,34 +11,39 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 public class MainActivity extends Activity {
-ImageView img;
+    ImageView img;
     ViewGroup.LayoutParams params;
-    int oldPoint,newPoint,padding,paddingTop,paddingBottom;
+    int oldPoint, newPoint, padding, paddingTop, paddingBottom;
+float scale = 1f;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        img = (ImageView)findViewById(R.id.img);
-        params= img.getLayoutParams();
-        paddingTop= img.getPaddingTop();
-        paddingBottom=img.getPaddingBottom();
+        img = (ImageView) findViewById(R.id.img);
+        params = img.getLayoutParams();
+        paddingTop = img.getPaddingTop();
+        paddingBottom = img.getPaddingBottom();
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        switch (event.getAction()){
+        switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                oldPoint=(int)event.getY();
+                oldPoint = (int) event.getY();
                 break;
             case MotionEvent.ACTION_MOVE:
-                newPoint=(int)event.getY();
-                padding = newPoint-oldPoint;
-                img.setPadding(0,paddingTop+padding,0,paddingBottom-padding);
+                newPoint = (int) event.getY();
+                padding = newPoint - oldPoint;
+                if(padding>0){
+                scale = (padding/800f)+1f;
+                img.setScaleX(scale);
+                img.setScaleY(scale);
+                img.setPadding(img.getPaddingLeft(), padding, img.getPaddingRight(),img.getPaddingBottom());}
                 break;
             case MotionEvent.ACTION_UP:
-                oldPoint=0;
-                newPoint=0;
-                img.setPadding(0,paddingTop,0,paddingBottom);
+                img.setScaleX(1);
+                img.setScaleY(1);
+                img.setPadding(0, paddingTop, 0, paddingBottom);
                 break;
         }
         return super.onTouchEvent(event);
