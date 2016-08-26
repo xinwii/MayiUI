@@ -2,6 +2,8 @@ package com.mayiui.app;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,41 +13,69 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 public class MainActivity extends Activity {
-    ImageView img;
-    ViewGroup.LayoutParams params;
-    int oldPoint, newPoint, padding, paddingTop, paddingBottom;
-float scale = 1f;
+    private ImageView img;
+    private int startY, padding, paddingTop;
+    private float scale = 1f;
+    private WaveHelper mWaveHelper;
+    private WaveView mWaveView;
+    private MyRecyclerView mRecyclerView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         img = (ImageView) findViewById(R.id.img);
-        params = img.getLayoutParams();
         paddingTop = img.getPaddingTop();
-        paddingBottom = img.getPaddingBottom();
+        mWaveView = (WaveView) findViewById(R.id.wave);
+        mWaveHelper = new WaveHelper(mWaveView);
+        mRecyclerView = (MyRecyclerView) findViewById(R.id.recyclerview);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        MyAdapter adapter = new MyAdapter(this);
+        mRecyclerView.setAdapter(adapter);
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                oldPoint = (int) event.getY();
+                startY = (int) event.getY();
                 break;
             case MotionEvent.ACTION_MOVE:
-                newPoint = (int) event.getY();
-                padding = newPoint - oldPoint;
-                if(padding>0){
-                scale = (padding/800f)+1f;
-                img.setScaleX(scale);
-                img.setScaleY(scale);
-                img.setPadding(img.getPaddingLeft(), padding, img.getPaddingRight(),img.getPaddingBottom());}
+                int tempY = (int) event.getY();
+                padding = tempY - startY;
+                if (padding > 0 && padding < 300) {
+                    if (mWaveHelper.getIsShow()) {
+                        mWaveView.setVisibility(View.VISIBLE);
+                    }
+                    scale = (padding / 800f) + 1f;
+                    img.setScaleX(scale);
+                    img.setPadding(img.getPaddingLeft(), padding, img.getPaddingRight(), img.getPaddingBottom());
+                }
                 break;
             case MotionEvent.ACTION_UP:
+                if (mWaveView.isShowWave()) {
+                    mWaveView.setVisibility(View.INVISIBLE);
+                }
                 img.setScaleX(1);
-                img.setScaleY(1);
-                img.setPadding(0, paddingTop, 0, paddingBottom);
+                img.setPadding(img.getPaddingLeft(), paddingTop, img.getPaddingRight(), img.getPaddingBottom());
                 break;
         }
         return super.onTouchEvent(event);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mWaveHelper.getIsShow()) {
+            mWaveHelper.cancel();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!mWaveHelper.getIsShow()) {
+            mWaveHelper.start();
+        }
     }
 }
