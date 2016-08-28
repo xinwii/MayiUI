@@ -23,6 +23,12 @@
         android:layout_height="40dp"
         android:layout_below="@id/img"
         android:background="#00000000"
+        android:visibility="gone"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="-20dp"/>
+    <com.mayiui.app.MyView
+        android:layout_below="@id/img"
+        android:layout_width="match_parent"
+        android:layout_height="14dp"
+        android:layout_marginTop="-7dp"/>
 </RelativeLayout>
